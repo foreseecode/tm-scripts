@@ -16,7 +16,7 @@ const sites = [];
  * START: Sites Confiugration
  */
 
-// sites.push({ url: /ftd.com/, siteKey: "ftd", container: "draft", moduleHost: host("us") });
+// sites.push({ url: /example.com/, siteKey: "example-com", container: "draft", moduleHost: host("us") });
 
 /*
  * END: Sites Confiugration
