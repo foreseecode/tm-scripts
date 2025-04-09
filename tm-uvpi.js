@@ -5,8 +5,8 @@
 // @version      1.0
 // @match        https://*/*
 // @namespace    http://tampermonkey.net/
-// @downloadURL  https://gist.githubusercontent.com/dantodev/4f8d0391b0afe777b39626c46feeed7b/raw/tm-uvpi.js
-// @updateURL    https://gist.githubusercontent.com/dantodev/4f8d0391b0afe777b39626c46feeed7b/raw/tm-uvpi.js
+// @downloadURL  https://raw.githubusercontent.com/foreseecode/tm-scripts/refs/heads/main/tm-uvpi.js
+// @updateURL    https://raw.githubusercontent.com/foreseecode/tm-scripts/refs/heads/main/tm-uvpi.js
 // @grant        none
 // ==/UserScript==
 
