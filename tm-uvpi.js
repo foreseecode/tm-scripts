@@ -2,7 +2,7 @@
 // @name         Unified Verint Product Injector (UVPI)
 // @description  This is a tampermonkey script to inject Verint products to any website.
 // @author       Daniel Kahl
-// @version      1.0
+// @version      1.1
 // @match        https://*/*
 // @namespace    http://tampermonkey.net/
 // @downloadURL  https://raw.githubusercontent.com/foreseecode/tm-scripts/refs/heads/main/tm-uvpi.js
@@ -11,11 +11,15 @@
 // ==/UserScript==
 
 const injector = createInjector();
+const isIframe = window.top != window.self;
 
-// START RULES -- see example:
+// START RULES
+
+// Example Unified WebSDK:
 // injector.rule(/blank.org/, "unified-websdk", { siteKey: "example-com", container: "draft", moduleHost: ucm("us") });
 
-injector.rule(/blank.org/, "unified-websdk", { siteKey: "default", container: "draft", moduleHost: ucm("us") });
+// Example IVA:
+// injector.rule(/blank.org/, "iva", { token: "..." });
 
 // END RULES
 
@@ -31,8 +35,6 @@ injector.script("unified-websdk", {
     blockIframe: true
   },
   inject({ blockIframe, version, ...siteConfig }) {
-    const isIframe = window.top != window.self;
-
     if (blockIframe && isIframe) {
       return;
     }
@@ -61,6 +63,34 @@ injector.script("unified-websdk", {
   }
 });
 
+injector.script("iva", {
+  defaultOptions: {
+    domain: "https://messenger.ivastudio.verint.live",
+    port: "443",
+    token: null,
+    blockIframe: true
+  },
+  inject({ blockIframe, domain, port, token }) {
+    if (blockIframe && isIframe) {
+      return;
+    }
+
+    window.ivasMessengerSettings = { domain, port, token };
+
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.async = true;
+    script.src = `${domain}:${port}/loader`;
+
+    const firstScript = document.getElementsByTagName("script")[0];
+    if (firstScript) {
+      firstScript.parentNode.insertBefore(script, firstScript);
+    } else {
+      document.head.appendChild(script);
+    }
+  }
+});
+
 // END SCRIPTS
 
 injector.run();
@@ -85,32 +115,25 @@ function createInjector() {
   };
 
   injector.run = function () {
-    const isIframe = window.top != window.self;
-
     if (!isIframe) {
-      info(`Run Detection...`);
+      info(`Run Injection...`);
     }
 
-    const matchedRule = rules.find((rule) => {
-      debug("Check Site for injection:", rule);
-      return rule?.url?.test(location.href);
-    });
-
-    if (!matchedRule) {
-      if (!isIframe) {
-        warn("No Rules matched. No injection.");
+    for (const rule of rules) {
+      if (!isIframe) debug("Check rule:", rule);
+      if (!rule?.url?.test(location.href)) {
+        continue;
       }
-      return;
-    }
 
-    const script = scripts[matchedRule.script];
-    if (!script) {
-      error(`Script "${matchedRule.script}" not registered.`);
-      return;
-    }
+      const script = scripts[rule.script];
+      if (!script) {
+        error(`Script "${rule.script}" not registered.`);
+        continue;
+      }
 
-    success(`✅ Injecting "${matchedRule.script}"...`);
-    script.inject({ ...script.defaultOptions, ...matchedRule.options });
+      success(`✅ Injecting "${rule.script}"...`);
+      script.inject({ ...script.defaultOptions, ...rule.options });
+    }
   };
 
   return injector;
@@ -142,7 +165,6 @@ function debug(...args) { logFactory("log", "gray", ...args); }
 function success(...args) { logFactory("log", "green", ...args); }
 
 function logFactory(level, color, msg, ...rest) {
-  const isIframe = window.top != window.self;
   const args = [];
 
   if (isIframe) {
