@@ -5,8 +5,8 @@
 // @version      1.7
 // @match        https://*/*
 // @namespace    http://tampermonkey.net/
-// @downloadURL  https://raw.githubusercontent.com/dantodev/uws-scripts/refs/heads/main/unified-websdk-injector.js
-// @updateURL    https://raw.githubusercontent.com/dantodev/uws-scripts/refs/heads/main/unified-websdk-injector.js
+// @downloadURL  https://raw.githubusercontent.com/foreseecode/tm-scripts/refs/heads/main/unified-websdk-injector.js
+// @updateURL    https://raw.githubusercontent.com/foreseecode/tm-scripts/refs/heads/main/unified-websdk-injector.js
 // @grant        none
 // ==/UserScript==
 
