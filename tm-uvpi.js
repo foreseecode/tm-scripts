@@ -2,9 +2,10 @@
 // @name         Unified Verint Product Injector (UVPI)
 // @description  This is a tampermonkey script to inject Verint products to any website.
 // @author       Daniel Kahl
-// @version      1.1
+// @version      1.2
 // @match        https://*/*
 // @namespace    http://tampermonkey.net/
+// @source       https://github.com/foreseecode/tm-scripts/blob/main/tm-uvpi.js
 // @downloadURL  https://raw.githubusercontent.com/foreseecode/tm-scripts/refs/heads/main/tm-uvpi.js
 // @updateURL    https://raw.githubusercontent.com/foreseecode/tm-scripts/refs/heads/main/tm-uvpi.js
 // @grant        none
@@ -16,10 +17,17 @@ const isIframe = window.top != window.self;
 // START RULES
 
 // Example Unified WebSDK:
-// injector.rule(/blank.org/, "unified-websdk", { siteKey: "example-com", container: "draft", moduleHost: ucm("us") });
+// injector.rule(/blank.org/, "unified-websdk", { siteKey: "default", container: "draft", moduleHost: ucm("us") });
 
 // Example IVA:
-// injector.rule(/blank.org/, "iva", { token: "..." });
+// injector.rule(/blank.org/, "iva", { domain: "...", token: "...", hostname: "..." });
+
+injector.rule(/blank.org/, "unified-websdk", { siteKey: "default", container: "draft", moduleHost: ucm("us") });
+injector.rule(/blank.org/, "iva", {
+  token: "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ3b3Jrc3BhY2VJZCI6IjY1OWViYTk3M2ZlZTQxZDcwYWE4NjNmZiIsImlhdCI6MTcwNDkwMTI3MX0.ONyCn6YotO0o7YoStC-IVQtFOa4-YfiqE1UgpwgtgzQEqTWUz8d5jx1-WWrALbveiMSp1zh0tJmTRJkw3tOyiPrYkkGyK-kbO5sMAevCHsmaVYIEMhk8V5bh5Xb9SFmyT674ez-nl7yLj36QfMW9k2MCSC_q_qHd-yX9TAsItP_Q0Pug3dtkOWvb8Qglibs4iqSLbZZKSdJiOs-LmYtpDemDIppboYKcFXZ_q45gqpo1miZLULEWPgUL2DcRmO4wsmTGIvYdikaxyrXIv3Nd7VdQZulB38Unp_RN-WnJd0rv7fYo45rRltFU9OA6BlKuT62mjpPJLzd_DFe0HO1CRQ",
+  domain: "https://messenger.ivastudio.verint.live",
+  port: "443"
+});
 
 // END RULES
 
@@ -31,13 +39,9 @@ injector.script("unified-websdk", {
     container: "draft",
     moduleHost: ucm("us"),
     configHost: null, // null => use same as "moduleHost"
-    version: null,
-    blockIframe: true
+    version: null
   },
-  inject({ blockIframe, version, ...siteConfig }) {
-    if (blockIframe && isIframe) {
-      return;
-    }
+  inject({ version, ...siteConfig }) {
 
     siteConfig.loadTime = Date.now();
     if (siteConfig.configHost === null) {
@@ -67,13 +71,9 @@ injector.script("iva", {
   defaultOptions: {
     domain: "https://messenger.ivastudio.verint.live",
     port: "443",
-    token: null,
-    blockIframe: true
+    token: null
   },
-  inject({ blockIframe, domain, port, token }) {
-    if (blockIframe && isIframe) {
-      return;
-    }
+  inject({ domain, port, token }) {
 
     window.ivasMessengerSettings = { domain, port, token };
 
@@ -131,8 +131,19 @@ function createInjector() {
         continue;
       }
 
+      // generate options object from default and rule options
+      const options = {
+        blockIframe: true,
+        ...script.defaultOptions,
+        ...rule.options
+      };
+
+      // block iframe when configured or cleanup from option as its not needed by the inject function
+      if (options.blockIframe && isIframe) return;
+      delete options.blockIframe;
+
       success(`✅ Injecting "${rule.script}"...`);
-      script.inject({ ...script.defaultOptions, ...rule.options });
+      script.inject(options);
     }
   };
 
