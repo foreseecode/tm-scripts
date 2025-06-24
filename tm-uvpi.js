@@ -2,7 +2,7 @@
 // @name         Unified Verint Product Injector (UVPI)
 // @description  This is a tampermonkey script to inject Verint products to any website.
 // @author       Daniel Kahl
-// @version      1.2
+// @version      1.3
 // @match        https://*/*
 // @namespace    http://tampermonkey.net/
 // @source       https://github.com/foreseecode/tm-scripts/blob/main/tm-uvpi.js
@@ -21,6 +21,9 @@ const isIframe = window.top != window.self;
 
 // Example IVA:
 // injector.rule(/blank.org/, "iva", { domain: "...", token: "...", hostname: "..." });
+
+injector.rule(/www.jacc.org/, "unified-websdk", { siteKey: "daniel-test-site", container: "draft", moduleHost: ucm("us-qa") });
+
 
 // END RULES
 
@@ -64,11 +67,12 @@ injector.script("iva", {
   defaultOptions: {
     domain: "https://messenger.ivastudio.verint.live",
     port: "443",
-    token: null
+    token: null,
+    branch: "lts"
   },
-  inject({ domain, port, token }) {
+  inject({ domain, port, token, ...other }) {
 
-    window.ivasMessengerSettings = { domain, port, token };
+    window.ivasMessengerSettings = { domain, port, token, ...other };
 
     const script = document.createElement("script");
     script.type = "text/javascript";
@@ -181,3 +185,11 @@ function logFactory(level, color, msg, ...rest) {
 
   console[level](...args, ...rest);
 }
+
+/**
+Updates:
+
+1.3
+- added support bor branch and other new IVA injection options
+
+*/
