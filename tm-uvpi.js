@@ -22,13 +22,6 @@ const isIframe = window.top != window.self;
 // Example IVA:
 // injector.rule(/blank.org/, "iva", { domain: "...", token: "...", hostname: "..." });
 
-injector.rule(/blank.org/, "unified-websdk", { siteKey: "default", container: "draft", moduleHost: ucm("us") });
-injector.rule(/blank.org/, "iva", {
-  token: "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ3b3Jrc3BhY2VJZCI6IjY1OWViYTk3M2ZlZTQxZDcwYWE4NjNmZiIsImlhdCI6MTcwNDkwMTI3MX0.ONyCn6YotO0o7YoStC-IVQtFOa4-YfiqE1UgpwgtgzQEqTWUz8d5jx1-WWrALbveiMSp1zh0tJmTRJkw3tOyiPrYkkGyK-kbO5sMAevCHsmaVYIEMhk8V5bh5Xb9SFmyT674ez-nl7yLj36QfMW9k2MCSC_q_qHd-yX9TAsItP_Q0Pug3dtkOWvb8Qglibs4iqSLbZZKSdJiOs-LmYtpDemDIppboYKcFXZ_q45gqpo1miZLULEWPgUL2DcRmO4wsmTGIvYdikaxyrXIv3Nd7VdQZulB38Unp_RN-WnJd0rv7fYo45rRltFU9OA6BlKuT62mjpPJLzd_DFe0HO1CRQ",
-  domain: "https://messenger.ivastudio.verint.live",
-  port: "443"
-});
-
 // END RULES
 
 // START SCRIPTS
