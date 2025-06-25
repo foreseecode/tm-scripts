@@ -68,7 +68,7 @@ injector.script("iva", {
     domain: "https://messenger.ivastudio.verint.live",
     port: "443",
     token: null,
-    branch: "lts"
+    branch: "current"
   },
   inject({ domain, port, token, ...other }) {
 
