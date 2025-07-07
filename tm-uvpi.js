@@ -22,9 +22,6 @@ const isIframe = window.top != window.self;
 // Example IVA:
 // injector.rule(/blank.org/, "iva", { token: "[PASTE TOKEN HERE]" });
 
-injector.rule(/www.jacc.org/, "unified-websdk", { siteKey: "daniel-test-site", container: "draft", moduleHost: ucm("us-qa") });
-
-
 // END RULES
 
 // START SCRIPTS
