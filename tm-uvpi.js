@@ -20,7 +20,7 @@ const isIframe = window.top != window.self;
 // injector.rule(/blank.org/, "unified-websdk", { siteKey: "default", container: "draft", moduleHost: ucm("us") });
 
 // Example IVA:
-// injector.rule(/blank.org/, "iva", { domain: "...", token: "...", hostname: "..." });
+// injector.rule(/blank.org/, "iva", { domain: "...", token: "..." });
 
 injector.rule(/www.jacc.org/, "unified-websdk", { siteKey: "daniel-test-site", container: "draft", moduleHost: ucm("us-qa") });
 
