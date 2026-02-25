@@ -2,7 +2,7 @@
 // @name         Unified Verint Product Injector (UVPI)
 // @description  This is a tampermonkey script to inject Verint products to any website.
 // @author       Daniel Kahl
-// @version      1.3
+// @version      1.4
 // @match        https://*/*
 // @namespace    http://tampermonkey.net/
 // @source       https://github.com/foreseecode/tm-scripts/blob/main/tm-uvpi.js
@@ -17,7 +17,7 @@ const isIframe = window.top != window.self;
 // START RULES
 
 // Example Unified WebSDK:
-// injector.rule(/blank.org/, "unified-websdk", { siteKey: "default", container: "draft", moduleHost: ucm("us") });
+// injector.rule(/blank.org/, "unified-websdk", { snippet: "v2", siteKey: "default", container: "draft", moduleHost: ucm("us") });
 
 // Example IVA:
 // injector.rule(/blank.org/, "iva", { token: "[PASTE TOKEN HERE]" });
@@ -32,13 +32,24 @@ injector.script("unified-websdk", {
     container: "draft",
     moduleHost: ucm("us"),
     configHost: null, // null => use same as "moduleHost"
-    version: null
+    version: null,
+    snippet: "v2"
   },
   inject({ version, ...siteConfig }) {
-
     siteConfig.loadTime = Date.now();
     if (siteConfig.configHost === null) {
       siteConfig.configHost = siteConfig.moduleHost;
+    }
+
+    if (siteConfig.snippet === "v3") {
+      const script = document.createElement("script");
+      const target = document.head || document.body;
+      script.type = "module";
+      script.async = true;
+      script.src = `//${siteConfig.moduleHost}/projects/${siteConfig.siteKey}/${siteConfig.container}/uws.js`;
+      script.setAttribute("data-uws", "3.0");
+      target.appendChild(script);
+      return;
     }
 
     const readyCallbacks = [];
@@ -189,4 +200,6 @@ Updates:
 1.3
 - added support bor branch and other new IVA injection options
 
+1.4
+- adding support for Unified WebSDK Embed Snippet v3
 */
