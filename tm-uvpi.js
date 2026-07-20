@@ -2,7 +2,7 @@
 // @name         Unified Verint Product Injector (UVPI)
 // @description  This is a tampermonkey script to inject Verint products to any website.
 // @author       Daniel Kahl
-// @version      1.4
+// @version      1.5
 // @match        https://*/*
 // @namespace    http://tampermonkey.net/
 // @source       https://github.com/foreseecode/tm-scripts/blob/main/tm-uvpi.js
@@ -19,6 +19,8 @@ const isIframe = window.top != window.self;
 // Example Unified WebSDK:
 // injector.rule(/blank.org/, "unified-websdk", { snippet: "v2", siteKey: "default", container: "draft", moduleHost: ucm("us") });
 
+injector.rule(/blank.org/, "unified-websdk", { snippet: "v3", customUrl: "//localhost:8443/bundles/bundle-demo/uws.js" });
+
 // Example IVA:
 // injector.rule(/blank.org/, "iva", { token: "[PASTE TOKEN HERE]" });
 
@@ -33,7 +35,8 @@ injector.script("unified-websdk", {
     moduleHost: ucm("us"),
     configHost: null, // null => use same as "moduleHost"
     version: null,
-    snippet: "v2"
+    snippet: "v2",
+    customUrl: null
   },
   inject({ version, ...siteConfig }) {
     siteConfig.loadTime = Date.now();
@@ -46,7 +49,11 @@ injector.script("unified-websdk", {
       const target = document.head || document.body;
       script.type = "module";
       script.async = true;
-      script.src = `//${siteConfig.moduleHost}/projects/${siteConfig.siteKey}/${siteConfig.container}/uws.js`;
+      if (siteConfig.customUrl) {
+        script.src = siteConfig.customUrl;
+      } else {
+        script.src = `//${siteConfig.moduleHost}/projects/${siteConfig.siteKey}/${siteConfig.container}/uws.js`;
+      }
       script.setAttribute("data-uws", "3.0");
       target.appendChild(script);
       return;
@@ -202,4 +209,7 @@ Updates:
 
 1.4
 - adding support for Unified WebSDK Embed Snippet v3
+
+1.5
+- unified-websdk: adding support for customUrl in Snippet v3 mode
 */
